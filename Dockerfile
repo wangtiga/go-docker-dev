@@ -23,7 +23,9 @@ RUN cd /tmp                                                             && \
     rm -rf /tmp/* /var/tmp/*
 
 # get go tools
-RUN go get golang.org/x/tools/cmd/godoc                                 && \
+RUN go env -w GO111MODULE=on                                            && \
+    go env -w GOPROXY=https://goproxy.cn,direct                         && \
+    go get golang.org/x/tools/cmd/godoc                                 && \
     go get github.com/nsf/gocode                                        && \
     go get golang.org/x/tools/cmd/goimports                             && \
     go get github.com/rogpeppe/godef                                    && \

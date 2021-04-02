@@ -20,6 +20,13 @@ Run this image from within your go workspace. You can than edit your project usi
 cd your/go/workspace
 docker run --rm -tiv `pwd`:/go mbrt/golang-vim-dev
 ```
+- build image and run container
+
+```
+sudo docker image build -t govimdev:0.0.2 .
+sudo docker run --rm -tiv `pwd`:/go govimdev:0.0.2
+```
+
 
 ## Limitations
 
