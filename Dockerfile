@@ -3,6 +3,9 @@ MAINTAINER Michele Bertasi
 
 ADD fs/ /
 
+ENV HTTP_PROXY=http://10.155.34.18:10809
+ENV HTTPS_PROXY=http://10.155.34.18:10809
+
 # install pagkages
 RUN apt-get update                                                      && \
     apt-get install -y ncurses-dev libtolua-dev exuberant-ctags gdb     && \
@@ -40,10 +43,24 @@ RUN go env -w GO111MODULE=on                                            && \
 # cleanup
     rm -rf /go/src/* /go/pkg
 
-# add dev user
-RUN adduser dev --disabled-password --gecos ""                          && \
-    echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers     && \
-    chown -R dev:dev /home/dev /go
+# Dockerfile replicate the host user UID and GID to the image
+# https://stackoverflow.com/questions/44683119/dockerfile-replicate-the-host-user-uid-and-gid-to-the-image
+ARG UNAME=dev
+ARG UID=1001
+ARG GID=1002
+RUN groupadd -g $GID -o $UNAME
+RUN useradd -m -u $UID -g $GID $UNAME
+RUN chown -R dev:dev /home/dev /go
+#RUN adduser dev -u $UID -g $GID --disabled-password --gecos ""          && \
+#    echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers     && \
+#    chown -R dev:dev /home/dev /go
+#
+# RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME                   && \
+
+# # add dev user
+# RUN adduser dev --disabled-password --gecos ""                          && \
+#     echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers     && \
+#     chown -R dev:dev /home/dev /go
 
 USER dev
 ENV HOME /home/dev
